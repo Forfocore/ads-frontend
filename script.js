@@ -14,18 +14,34 @@ $(document).ready(function() {
 
     // Добавляем новое обявление.
     $('#new').click(function() {
-        var ad = {
-            text: $('textarea[name="text"]').val(),
-            contactName: $('input[name="name"]').val(),
-            contactPhone: $('input[name="phone"]').val()
-        }
+    //     var ad = {
+    //         text: $('textarea[name="text"]').val(),
+    //         contactName: $('input[name="name"]').val(),
+    //         contactPhone: $('input[name="phone"]').val()
+    //     }
 
-        arrayAds.push(ad);
+    //     arrayAds.push(ad);
 
-        console.log(arrayAds);
+    //     console.log(arrayAds);
         
-        // Отрисовка новых объявлений.
-        renderAds();
+    //     // Отрисовка новых объявлений.
+    //     renderAds();
+
+    var ad = {
+    text: $('textarea[name="text"]').val(),
+    name: $('input[name="name"]').val(),
+    phone: $('input[name="phone"]').val()
+    }
+    console.log(ad);
+
+    $.ajax({
+        type: 'POST',
+        url: 'http://localhost/api.php?add',
+        data: ad,
+        success: function(data) {
+            initPage();
+        }
+    });
 
         // Скрыть модальное окно.
         $('#modal').hide();
@@ -57,4 +73,34 @@ $(document).ready(function() {
         });
     }
 
+    function initPage() {
+
+        arrayAds=[];
+        $.ajax({
+            type: 'GET',
+            url: 'http://localhost/api.php?all',
+            success: function(data) {
+                console.log(data);
+
+                data.map(elemet => {
+                    var ad = {
+                        text: elemet.text,
+                        contactName: elemet.name,
+                        contactPhone: elemet.phone
+                    }
+            
+                    arrayAds.push(ad);
+            
+                    console.log(arrayAds);
+                    
+                    // Отрисовка новых объявлений.
+                    renderAds();
+
+                });
+            }
+        });
+
+    }
+
+    initPage();
 });
